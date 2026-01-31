@@ -11,7 +11,7 @@ public class SwipeSnapMenu : MonoBehaviour, IBeginDragHandler, IEndDragHandler {
     [SerializeField] private RectTransform _contentContainer;
     [SerializeField] private Scrollbar _scrollbar;
     [SerializeField] private float _snapSpeed = 15;
-    public int selectedTabIndex => _selectedTabIndex;
+    public int SelectedTabIndex => _selectedTabIndex;
 
     private bool _isBreak;
     private bool _isDragging;
@@ -23,6 +23,13 @@ public class SwipeSnapMenu : MonoBehaviour, IBeginDragHandler, IEndDragHandler {
     private float _lastSnappTime;
     private int _lasNdx = 0, _curNdx = 1;
 
+    void Start() {
+        _lastSnappTime = Time.time;
+        _scrollbar.value = _curNdx;
+        _itemSize = 1f / (_itemPositions.Count -1);
+        StartCoroutine(AutoSnapping());
+    }
+
     public void OnBeginDrag(PointerEventData eventData) {
         _isDragging = true;
         _isSnapping = false;
@@ -32,12 +39,6 @@ public class SwipeSnapMenu : MonoBehaviour, IBeginDragHandler, IEndDragHandler {
         _targetScrollBarValue = _scrollbar.value;
         _isDragging = false;
         FindSnappingTabAndStartSnapping();
-    }
-
-    void Start() {
-        _lastSnappTime = Time.time;
-        _scrollbar.value = _curNdx;
-        StartCoroutine(AutoSnapping());
     }
 
     void Update() {
